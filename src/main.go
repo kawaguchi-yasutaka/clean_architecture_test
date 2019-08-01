@@ -3,24 +3,40 @@ package main
 import (
 	"controller"
 	"fmt"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"interactor"
+	"model"
 	"repository"
 	"request"
-	"model"
 )
 
-func Init() controller.UserControllerInterface {
-	repository.UsersStore = map[string]*model.User{}
-	repository := repository.InmemoryUserRepository{}
-	interactor := interactor.UserCreateInteractor{UserRepository: repository}
+func initDb() *gorm.DB {
+	db, err := gorm.Open("mysql", "master:gagagigu123@tcp(localhost:3306)/clean_architecture_practice?charset=utf8&parseTime=True&loc=Local")
+	if err != nil {
+		fmt.Println(err)
+		panic("failed to connect database")
+	}
+	db.AutoMigrate(&model.Task{}, &model.User{})
+	return db
+}
+
+func initRepository(db *gorm.DB) repository.UserRepository {
+	return repository.DbUserRepository{Db: db}
+}
+
+func Init(db *gorm.DB) controller.UserControllerInterface {
+	userRepository := initRepository(db)
+	interactor := interactor.UserCreateInteractor{UserRepository: userRepository}
 	return controller.UserController{UserCreateCase: interactor}
 }
 
 func main() {
-	controller := Init()
+	db := initDb()
+	defer db.Close()
+	controller := Init(db)
 	request := request.UserCreateRequest{Name: "kawaguchi"}
-	response,_:= controller.Create(request)
+	response, _ := controller.Create(request)
 	fmt.Println(response)
 	fmt.Println(repository.UsersStore)
 }
-

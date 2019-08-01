@@ -1,6 +1,10 @@
 package repository
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"github.com/jinzhu/gorm"
+)
 import "model"
 
 var UsersStore map[string]*model.User
@@ -24,4 +28,23 @@ func (repository InmemoryUserRepository) FindByName(name string) (*model.User, e
 	} else {
 		return nil, errors.New("user not found")
 	}
+}
+
+type DbUserRepository struct {
+	Db *gorm.DB
+}
+
+func (repository DbUserRepository) Save(name string) {
+	//現状ただ新規作成
+	newUser := model.User{Name: name}
+	result := repository.Db.Create(&newUser)
+	fmt.Println(result.Error)
+}
+
+func (repository DbUserRepository) FindByName(name string) (*model.User, error) {
+	user := &model.User{}
+	if err := repository.Db.Where("name = ?", name).First(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
 }

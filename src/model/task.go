@@ -2,8 +2,8 @@ package model
 
 import "github.com/jinzhu/gorm"
 
-type User struct {
+type Task struct {
 	gorm.Model
-	Name     string
-	Password string
+	Title       string
+	Description string
 }
