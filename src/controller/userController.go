@@ -5,14 +5,13 @@ import "response"
 import "useCases"
 
 type UserControllerInterface interface {
-	Create(request.UserCreateRequest) (response.UserCreateResponse, error)
+	SignUp(request.UserCreateRequest) (response.UserCreateResponse, error)
 }
 
 type UserController struct {
-	UserCreateCase useCases.UserCreateCase
+	UserSignUpCase useCases.UserSignUpCase
 }
 
-
-func (controller UserController) Create(request request.UserCreateRequest) (response.UserCreateResponse, error) {
-	return controller.UserCreateCase.Handle(request)
+func (controller UserController) SignUp(request request.UserCreateRequest) (response.UserCreateResponse, error) {
+	return controller.UserSignUpCase.Handle(request)
 }

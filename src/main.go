@@ -27,8 +27,8 @@ func initRepository(db *gorm.DB) repository.UserRepository {
 
 func Init(db *gorm.DB) controller.UserControllerInterface {
 	userRepository := initRepository(db)
-	interactor := interactor.UserCreateInteractor{UserRepository: userRepository}
-	return controller.UserController{UserCreateCase: interactor}
+	interactor := interactor.UserSignUpInteractor{UserRepository: userRepository}
+	return controller.UserController{UserSignUpCase: interactor}
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 	defer db.Close()
 	controller := Init(db)
 	request := request.UserCreateRequest{Name: "kawaguchi"}
-	response, _ := controller.Create(request)
+	response, _ := controller.SignUp(request)
 	fmt.Println(response)
 	fmt.Println(repository.UsersStore)
 }

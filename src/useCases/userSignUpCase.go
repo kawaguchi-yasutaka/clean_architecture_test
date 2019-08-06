@@ -3,7 +3,6 @@ package useCases
 import "request"
 import "response"
 
-
-type UserCreateCase interface {
+type UserSignUpCase interface {
 	Handle(request.UserCreateRequest) (response.UserCreateResponse, error)
 }

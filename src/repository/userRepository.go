@@ -10,14 +10,15 @@ import "model"
 var UsersStore map[string]*model.User
 
 type UserRepository interface {
-	Save(string)
+	Create(string)
+	//Update(string)
 	FindByName(string) (*model.User, error)
 }
 
 type InmemoryUserRepository struct {
 }
 
-func (repository InmemoryUserRepository) Save(name string) {
+func (repository InmemoryUserRepository) Create(name string) {
 	newUser := model.User{Name: name}
 	UsersStore[name] = &newUser
 }
@@ -34,7 +35,7 @@ type DbUserRepository struct {
 	Db *gorm.DB
 }
 
-func (repository DbUserRepository) Save(name string) {
+func (repository DbUserRepository) Create(name string) {
 	//現状ただ新規作成
 	newUser := model.User{Name: name}
 	result := repository.Db.Create(&newUser)
