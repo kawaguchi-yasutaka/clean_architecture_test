@@ -11,9 +11,9 @@ type UserSignUpInteractor struct {
 }
 
 func (UserSignUpInteractor UserSignUpInteractor) Handle(request request.UserCreateRequest) (response.UserCreateResponse, error) {
-	if _, error := UserSignUpInteractor.UserRepository.FindByName(request.Email); error == nil {
+	if _, error := UserSignUpInteractor.UserRepository.FindByEmail(request.Email); error == nil {
 		return response.UserCreateResponse{}, error
 	}
-	UserSignUpInteractor.UserRepository.Create(request.Name)
+	UserSignUpInteractor.UserRepository.Create(request.Name, request.Email)
 	return response.UserCreateResponse{Name: request.Name}, nil
 }

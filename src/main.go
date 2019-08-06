@@ -35,7 +35,7 @@ func main() {
 	db := initDb()
 	defer db.Close()
 	controller := Init(db)
-	request := request.UserCreateRequest{Name: "kawaguchi"}
+	request := request.UserCreateRequest{Name: "kawaguchi", Email: "kawaguchi.yasutaka@gmail.com"}
 	response, _ := controller.SignUp(request)
 	fmt.Println(response)
 	fmt.Println(repository.UsersStore)

@@ -10,21 +10,21 @@ import "model"
 var UsersStore map[string]*model.User
 
 type UserRepository interface {
-	Create(string)
+	Create(string, string)
 	//Update(string)
-	FindByName(string) (*model.User, error)
+	FindByEmail(string) (*model.User, error)
 }
 
 type InmemoryUserRepository struct {
 }
 
-func (repository InmemoryUserRepository) Create(name string) {
-	newUser := model.User{Name: name}
+func (repository InmemoryUserRepository) Create(name string, email string) {
+	newUser := model.User{Name: name, Email: email}
 	UsersStore[name] = &newUser
 }
 
-func (repository InmemoryUserRepository) FindByName(name string) (*model.User, error) {
-	if x, ok := UsersStore[name]; ok {
+func (repository InmemoryUserRepository) FindByEmail(email string) (*model.User, error) {
+	if x, ok := UsersStore[email]; ok {
 		return x, nil
 	} else {
 		return nil, errors.New("user not found")
@@ -35,17 +35,19 @@ type DbUserRepository struct {
 	Db *gorm.DB
 }
 
-func (repository DbUserRepository) Create(name string) {
+func (repository DbUserRepository) Create(name string, email string) {
 	//現状ただ新規作成
-	newUser := model.User{Name: name}
+	newUser := model.User{Name: name, Email: email}
 	result := repository.Db.Create(&newUser)
 	fmt.Println(result.Error)
 }
 
-func (repository DbUserRepository) FindByName(name string) (*model.User, error) {
+func (repository DbUserRepository) FindByEmail(email string) (*model.User, error) {
 	user := &model.User{}
-	if err := repository.Db.Where("name = ?", name).First(user).Error; err != nil {
+	if err := repository.Db.Where("email = ?", email).First(user).Error; err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
+	fmt.Println(user.Email)
 	return user, nil
 }
